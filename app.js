@@ -1,8 +1,29 @@
+const app     = require('express')();
 const request = require('request');
-const logger = require('morgan');
+const logger  = require('morgan');
+const yargs   = require('yargs');
+
+const argv = yargs
+  .options({
+    a: {
+      demand:   true,
+      alias:    'address',
+      describe: 'Address to fetch weather for',
+      string:   true
+    }
+  })
+  .help()
+  .alias('help', 'h')
+  .argv;
+
+let encodedAddress = encodeURIComponent(argv.address);
+
+console.log(argv);
+
+app.use(logger('dev'));
 
 request({
-  url: 'http://maps.googleapis.com/maps/api/geocode/json?address=220%20sinclair%20ave%20staten%20island',
+  url: `http://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}`,
   json: true
 }, (error, response, body) => {
   console.log(JSON.stringify(response, undefined, 2));
